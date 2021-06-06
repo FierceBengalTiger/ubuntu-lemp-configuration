@@ -1,0 +1,45 @@
+server {
+    listen 80;
+
+    # Domain Name
+    # Modify - Domain name as yours
+    server_name www.example.com;
+
+    return 301 http://example.com$request_uri;
+}
+
+server {
+    listen 80;
+
+    # Domain Name
+    # Modify - Domain name as yours
+    server_name example.com;
+
+    underscores_in_headers on;
+    client_max_body_size 10M;
+
+    # Log files for Debugging
+    # Modify - Error log name as yours
+    error_log /var/log/nginx/example.com-error.log;
+
+    # WebRoot Directory for project
+    # Modify - WebRoot name as yours
+    root /var/www/example.com;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # Nginx configuration
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        # Modify - PHP version name as yours
+        fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_cache off;
+        include fastcgi_params;
+    }
+}
